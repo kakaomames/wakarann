@@ -1,0 +1,31 @@
+name: Xiaomi ROM Extractor
+
+on:
+  workflow_dispatch: # iPadのブラウザなどから手動でポチッと起動できるスイッチ
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download Huge Xiaomi ROM (9.4GB)
+        run: |
+          echo "ACTION: 巨大ROMのダウンロードを開始します！"
+          curl -L -o garnet_rom.tgz "https://bigota.d.miui.com/OS3.0.301.0.WNRMIXM/garnet_global_images_OS3.0.301.0.WNRMIXM_20260507.0000.00_16.0_global_591c63df16.tgz"
+
+      - name: Extract ROM Images
+        run: |
+          echo "ACTION: データを解凍して system.img と boot.img をサルベージ中..."
+          tar -xvzf garnet_rom.tgz
+          mkdir -p output
+          cp garnet_global_images_*/images/system.img ./output/
+          cp garnet_global_images_*/images/boot.img ./output/
+
+      - name: Upload Extracted Images
+        uses: actions/upload-artifact@v4
+        with:
+          name: xiaomi-extracted-images
+          path: ./output/
+          retention-days: 1 # 容量がデカいので1日だけ保存
