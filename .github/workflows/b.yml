@@ -1,0 +1,28 @@
+name: Xiaomi ROM Extractor B
+
+on:
+  workflow_dispatch: # iPadのブラウザなどから手動でポチッと起動できるスイッチ
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download Huge Xiaomi ROM (9.4GB)
+        run: |
+          echo "ACTION: 巨大ROMのダウンロードを開始します！"
+          bash android.sh
+
+      - name: Extract ROM Images
+        run: |
+          echo "ACTION: データを解凍して system.img と boot.img をサルベージ中..."
+          
+
+      - name: Upload Extracted Images
+        uses: actions/upload-artifact@v4
+        with:
+          name: xiaomi-extracted-images
+          path: ./output/
+          retention-days: 1 # 容量がデカいので1日だけ保存
